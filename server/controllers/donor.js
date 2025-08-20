@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Patient from "../models/Patient.js";
 
 const getUsers = async (req, res) => {
     try {
@@ -26,6 +27,71 @@ const getUsers = async (req, res) => {
       });
     }
   };
+
+
+  const addPatient=async(req,res)=>{
+    try {
+         const {patientName,bloodType,city,hospital,details}=req.body;
+         const patientExists = await Patient.findOne({ patientName, bloodType, city, hospital });
+
+         if (patientExists) {
+           return res.status(400).json({
+             message: "Patient already exists"
+           });
+         }
+    // Create new patient
+        const patient = await Patient.create({
+            patientName,
+            bloodType,
+            city,
+            hospital,
+            details
+        });
+
+        res.status(201).json({
+            message: "Patient added successfully",
+            patient
+          });
+        } catch (error) {
+          console.error("Error adding patient:", error.message);
+          res.status(500).json({
+            message: "Internal Server Error"
+          });
+        }
+      };
+
+
+      const getPatients = async (req, res) => {
+        try {
+          const { patientName, bloodType, city, hospital, details } = req.query;
+      
+          // Build dynamic filter
+          const filter = {};
+      
+          if (patientName) filter.patientName = new RegExp(patientName, "i"); // case-insensitive search
+          if (city) filter.city = new RegExp(city, "i");
+          if (hospital) filter.hospital = new RegExp(hospital, "i");
+          if (details) filter.details = new RegExp(details, "i");
+          if (bloodType) filter.bloodType = bloodType.trim();
+      
+          // Query patients collection
+          const patients = await Patient.find(filter);
+      
+          if (patients.length === 0) {
+            return res.status(404).json({
+              message: "No patients found"
+            });
+          }
+      
+          res.json(patients);
+        } catch (error) {
+          console.error("Error fetching patients:", error.message);
+          res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message
+          });
+        }
+      };
   
-  export { getUsers };
+  export { getUsers,addPatient,getPatients };
   

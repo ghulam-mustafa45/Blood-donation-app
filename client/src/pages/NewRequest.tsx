@@ -22,7 +22,7 @@ export default function NewRequest() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
-    await api.post('/requests', data)
+    await api.post('/registerPatient', data)
     reset()
     alert('Request created')
   }
