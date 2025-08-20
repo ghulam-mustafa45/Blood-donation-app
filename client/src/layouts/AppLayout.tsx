@@ -14,6 +14,7 @@ export default function AppLayout() {
           <nav className="flex items-center gap-4 text-sm">
             <Link to="/donors" className="hover:text-primary">Donors</Link>
             <Link to="/request/new" className="hover:text-primary">New Request</Link>
+            <Link to="/requests" className="hover:text-primary">All Requests</Link>
             <Link to="/chat" className="hover:text-primary">Chat</Link>
             {user ? <button onClick={() => dispatch(logout())} className="text-gray-600 hover:text-primary">Logout</button> : <Link to="/login" className="text-gray-600 hover:text-primary">Login</Link>}
           </nav>

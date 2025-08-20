@@ -8,6 +8,7 @@ const DashboardPage = lazy(() => import('./pages/Dashboard'))
 const DonorsPage = lazy(() => import('./pages/Donors'))
 const NewRequestPage = lazy(() => import('./pages/NewRequest'))
 const ChatPage = lazy(() => import('./pages/Chat'))
+const RequestsPage = lazy(() => import('./pages/Requests'))
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<DashboardPage />} />
           <Route path="/donors" element={<DonorsPage />} />
           <Route path="/request/new" element={<NewRequestPage />} />
+          <Route path="/requests" element={<RequestsPage />} />
           <Route path="/chat" element={<ChatPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
