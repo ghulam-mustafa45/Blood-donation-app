@@ -1,0 +1,56 @@
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from '../services/api'
+import type { BloodType } from '../types'
+import Card from '../components/ui/Card'
+import Input from '../components/ui/Input'
+import Select from '../components/ui/Select'
+import Button from '../components/ui/Button'
+
+const schema = z.object({
+  patientName: z.string().min(3),
+  bloodType: z.string().min(1),
+  city: z.string().min(2),
+  hospital: z.string().optional(),
+  details: z.string().optional(),
+})
+
+type FormData = z.infer<typeof schema>
+
+export default function NewRequest() {
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+
+  const onSubmit = async (data: FormData) => {
+    await api.post('/requests', data)
+    reset()
+    alert('Request created')
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">New Blood Request</h2>
+      <Card>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input label="Patient Name" {...register('patientName')} error={errors.patientName?.message} />
+          <Select label="Blood Type" {...register('bloodType')} error={errors.bloodType?.message}>
+            {(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as BloodType[]).map((bt) => (
+              <option key={bt} value={bt}>{bt}</option>
+            ))}
+          </Select>
+          <Input label="City" {...register('city')} error={errors.city?.message} />
+          <Input label="Hospital" {...register('hospital')} />
+          <div className="md:col-span-2 space-y-1">
+            <label className="text-sm font-medium text-gray-700">Details</label>
+            <textarea className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" rows={4} {...register('details')} />
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Creating...' : 'Create Request'}</Button>
+          </div>
+        </form>
+      </Card>
+    </div>
+  )
+}
+
+
