@@ -31,7 +31,7 @@ const getUsers = async (req, res) => {
 
   const addPatient=async(req,res)=>{
     try {
-         const {patientName,bloodType,city,hospital,details}=req.body;
+         const {patientName,bloodType,city,hospital,details,phone, gender}=req.body;
          const patientExists = await Patient.findOne({ patientName, bloodType, city, hospital });
 
          if (patientExists) {
@@ -45,12 +45,15 @@ const getUsers = async (req, res) => {
             bloodType,
             city,
             hospital,
-            details
-        });
+            details,
+            phone, 
+            gender
+            });
 
         res.status(201).json({
             message: "Patient added successfully",
             patient
+          
           });
         } catch (error) {
           console.error("Error adding patient:", error.message);
@@ -63,7 +66,7 @@ const getUsers = async (req, res) => {
 
       const getPatients = async (req, res) => {
         try {
-          const { patientName, bloodType, city, hospital, details } = req.query;
+          const { patientName, bloodType, city, hospital, details,phone,gender } = req.query;
       
           // Build dynamic filter
           const filter = {};
@@ -73,6 +76,8 @@ const getUsers = async (req, res) => {
           if (hospital) filter.hospital = new RegExp(hospital, "i");
           if (details) filter.details = new RegExp(details, "i");
           if (bloodType) filter.bloodType = bloodType.trim();
+          if (phone) filter.phone = new RegExp(phone, "i"); // partial match allowed
+          if (gender) filter.gender = gender.trim(); // exact match (male/female/other)
       
           // Query patients collection
           const patients = await Patient.find(filter);

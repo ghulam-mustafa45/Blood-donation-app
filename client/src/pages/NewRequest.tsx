@@ -14,6 +14,10 @@ const schema = z.object({
   city: z.string().min(2),
   hospital: z.string().optional(),
   details: z.string().optional(),
+  phone: z.string()
+    .min(10, "Phone number must be at least 10 digits")
+    .max(15, "Phone number must be less than 15 digits"),
+    gender: z.enum(["Male", "Female", "Other"], { required_error: "Gender is required" }),
 })
 
 type FormData = z.infer<typeof schema>
@@ -40,6 +44,13 @@ export default function NewRequest() {
           </Select>
           <Input label="City" {...register('city')} error={errors.city?.message} />
           <Input label="Hospital" {...register('hospital')} />
+          <Input label="Phone Number" {...register('phone')} error={errors.phone?.message} />
+          <Select label="Gender" {...register('gender')} error={errors.gender?.message}>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </Select>
           <div className="md:col-span-2 space-y-1">
             <label className="text-sm font-medium text-gray-700">Details</label>
             <textarea className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" rows={4} {...register('details')} />

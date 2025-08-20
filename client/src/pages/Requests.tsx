@@ -13,6 +13,8 @@ export default function Requests() {
   const [bloodType, setBloodType] = useState<BloodType | ''>('')
   const [city, setCity] = useState('')
   const [hospital, setHospital] = useState('')
+  const [phone, setPhone] = useState('')
+  const [gender, setGender] = useState('')
 
   useEffect(() => {
     void load()
@@ -26,6 +28,8 @@ export default function Requests() {
       if (bloodType) params.bloodType = bloodType
       if (city) params.city = city
       if (hospital) params.hospital = hospital
+      if (phone) params.phone = phone
+      if (gender) params.gender = gender
       const { data } = await api.get('/allPatients', { params })
       setRequests(data)
     } finally {
@@ -37,7 +41,7 @@ export default function Requests() {
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Active Blood Requests</h2>
       <Card>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
           <Input label="Patient" placeholder="Name" value={patientName} onChange={(e) => setPatientName(e.target.value)} />
           <Select label="Blood Type" value={bloodType} onChange={(e) => setBloodType(e.target.value as any)}>
             <option value="">All Blood Types</option>
@@ -47,6 +51,13 @@ export default function Requests() {
           </Select>
           <Input label="City" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
           <Input label="Hospital" placeholder="Hospital" value={hospital} onChange={(e) => setHospital(e.target.value)} />
+          <Input label="Phone" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <Select label="Gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="">All Genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </Select>
           <div className="flex items-end">
             <Button onClick={load} disabled={loading}>{loading ? 'Loading...' : 'Search'}</Button>
           </div>
@@ -57,10 +68,17 @@ export default function Requests() {
           <Card key={r._id}>
             <div className="flex items-start justify-between">
               <div>
-                <h4 className="font-semibold">{r.patientName}</h4>
-                <p className="text-sm text-gray-600">{r.city}{r.hospital ? ` • ${r.hospital}` : ''}</p>
+                <h4 className="font-semibold pb-2 text-lg ">{r.patientName}</h4>
+                <p className="text-sm text-gray-600"><b>City :</b> {r.city} <br /> <b>Hospital : </b>{r.hospital ? ` ${r.hospital}` : ''}</p>
+                {(r.gender || r.phone) && (
+                  <p className="mt-1 text-sm text-gray-700">
+                   <b>Gender : </b> {r.gender ? ` ${r.gender}` : ''}
+                    {r.gender && r.phone ? '  ' : ''}
+                   <br /><b>Phone : </b> {r.phone ? `Phone: ${r.phone}` : ''}
+                  </p>
+                )}
               </div>
-              <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">{r.bloodType}</span>
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"><b>Blood : </b> {r.bloodType}</span>
             </div>
             {r.details && <p className="mt-2 text-sm text-gray-700">{r.details}</p>}
             <p className="mt-3 text-xs text-gray-500">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</p>
