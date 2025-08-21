@@ -7,6 +7,7 @@ import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import Button from '../components/ui/Button'
+import { useCreateRequestMutation } from '../store/api/requestsApi'
 import { useAuth } from '../store/auth'
 
 const schema = z.object({
@@ -26,10 +27,11 @@ type FormData = z.infer<typeof schema>
 export default function NewRequest() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
   const user = useAuth((s) => s.user)
+  const [createRequest] = useCreateRequestMutation()
 
   const onSubmit = async (data: FormData) => {
-    const payload = { ...data, requestedBy: user?._id }
-    await api.post('/registerPatient', payload)
+    // Backend will set requestedBy from the JWT
+    await createRequest(data as any).unwrap()
     reset()
     alert('Request created')
   }

@@ -9,6 +9,7 @@ const DonorsPage = lazy(() => import('./pages/Donors'))
 const NewRequestPage = lazy(() => import('./pages/NewRequest'))
 const ChatPage = lazy(() => import('./pages/Chat'))
 const RequestsPage = lazy(() => import('./pages/Requests'))
+const RequestDetailPage = lazy(() => import('./pages/RequestDetail'))
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/donors" element={<DonorsPage />} />
           <Route path="/request/new" element={<NewRequestPage />} />
           <Route path="/requests" element={<RequestsPage />} />
+          <Route path="/requests/:id" element={<RequestDetailPage />} />
           <Route path="/chat" element={<ChatPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

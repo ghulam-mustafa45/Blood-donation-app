@@ -1,6 +1,21 @@
 export type BloodType = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 export type Gender = "Male" | "Female" | "Other";
 
+export type RequestStatus = 'Open' | 'In Progress' | 'Fulfilled' | 'Cancelled' | 'Expired'
+
+export interface RequestAssignment {
+  donorId: string;
+  donorName: string;
+  assignedAt: string; // ISO
+}
+
+export interface RequestNote {
+  authorId: string;
+  authorName: string;
+  message: string;
+  createdAt: string;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -22,6 +37,11 @@ export interface DonationRequest {
   requestedBy: string; // userId
   phone?: string;
   gender?: Gender;
+  status?: RequestStatus;
+  assignment?: RequestAssignment;
+  etaAt?: string; // ISO
+  notes?: RequestNote[];
+  expiresAt?: string; // ISO
 }
 
 export interface ApiResponse<T> {

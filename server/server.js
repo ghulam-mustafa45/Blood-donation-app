@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import donorRoutes from "./routes/donor.js";
+import requestsRoutes from "./routes/requests.js";
 import connectDB from "./utils/db.js";
 import http from "http";
 import { Server } from "socket.io";
@@ -28,6 +29,7 @@ app.use(express.json());
 // Sample Route
 app.use("/api/auth", authRoutes);
 app.use("/api", donorRoutes);
+app.use("/api/requests", requestsRoutes);
 
 
 // Create HTTP server and Socket.IO
