@@ -25,6 +25,18 @@ export const loginThunk = createAsyncThunk(
   }
 )
 
+export const hydrateFromTokenThunk = createAsyncThunk(
+  'auth/hydrate',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get('/auth/me')
+      return data as { user: User }
+    } catch (err: any) {
+      return rejectWithValue('')
+    }
+  }
+)
+
 export const registerThunk = createAsyncThunk(
   'auth/register',
   async (params: { name: string; email: string; password: string; bloodType?: string; city: string; contactInfo?: string }, { rejectWithValue }) => {
@@ -71,6 +83,10 @@ const authSlice = createSlice({
       .addCase(registerThunk.rejected, (state, { payload }) => {
         state.isLoading = false
         state.error = String(payload)
+      })
+
+      .addCase(hydrateFromTokenThunk.fulfilled, (state, { payload }) => {
+        state.user = payload.user
       })
   }
 })

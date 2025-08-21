@@ -29,6 +29,7 @@ const registerSchema = z.object({
     .max(12, { message: "Contact Info must be at most 12 characters" })
     .trim()
     .toLowerCase(),
+  role: z.enum(["Donor", "Patient"], { required_error: "Role is required" }),
 });
 
 const loginSchema = z.object({

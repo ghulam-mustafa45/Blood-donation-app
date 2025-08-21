@@ -1,9 +1,12 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../store'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { useSocket } from '../context/SocketContext'
-import { useAuth } from '../store/auth'
 
 type ChatMessage = {
   id?: string
@@ -14,18 +17,21 @@ type ChatMessage = {
 
 export default function Chat() {
   const { socket } = useSocket()
-  const user = useAuth((s) => s.user)
+  const user = useSelector((s: RootState) => s.auth.user)
   const [room, setRoom] = useState<string>('global')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [text, setText] = useState('')
   const listRef = useRef<HTMLDivElement | null>(null)
+  const [searchParams] = useSearchParams()
+  const [customRoom, setCustomRoom] = useState<{ key: string; label: string } | null>(null)
 
   const availableRooms = useMemo(() => {
     const rooms = [{ key: 'global', label: 'Global' }]
     if (user?.city) rooms.push({ key: `city:${user.city}`, label: `City • ${user.city}` })
     if (user?.bloodType) rooms.push({ key: `blood:${user.bloodType}`, label: `Blood • ${user.bloodType}` })
+    if (customRoom && !rooms.find(r => r.key === customRoom.key)) rooms.push(customRoom)
     return rooms
-  }, [user?.city, user?.bloodType])
+  }, [user?.city, user?.bloodType, customRoom])
 
   useEffect(() => {
     if (!socket) return
@@ -44,6 +50,17 @@ export default function Chat() {
     setMessages([])
     socket.emit('chat:join', { room })
   }, [socket, room])
+
+  // Read deep-link ?room=...&label=...
+  useEffect(() => {
+    const qRoom = searchParams.get('room')
+    const label = searchParams.get('label') || 'Custom Room'
+    if (qRoom) {
+      setCustomRoom({ key: qRoom, label })
+      setRoom(qRoom)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!listRef.current) return

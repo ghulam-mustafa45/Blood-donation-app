@@ -1,13 +1,43 @@
 import User from "../models/User.js";
 import Patient from "../models/Patient.js";
 
-const getUsers = async (req, res) => {
+// const getUsers = async (req, res) => {
+//     try {
+//       const { city, bloodType } = req.query;
+  
+//       const filter = {};
+//       const cityFilter = typeof city === 'string' ? city.trim().toLowerCase() : undefined;
+//       const bloodFilter = typeof bloodType === 'string' ? bloodType.trim().toLowerCase() : undefined;
+//       if (cityFilter) filter.city = cityFilter;
+//       if (bloodFilter) filter.bloodType = bloodFilter;
+  
+//       const users = await User.find(filter);
+  
+//       if (users.length === 0) {
+//         return res.status(404).json({
+//           message: "No users found"
+//         });
+//       }
+  
+//       res.json(users);
+//     } catch (error) {
+//       res.status(500).json({
+//         message: "Internal Server Error",
+//         error: error.message
+//       });
+//     }
+//   };
+
+
+  const getDonors = async (req, res) => {
     try {
       const { city, bloodType } = req.query;
   
-      const filter = {};
-      const cityFilter = typeof city === 'string' ? city.trim().toLowerCase() : undefined;
-      const bloodFilter = typeof bloodType === 'string' ? bloodType.trim().toLowerCase() : undefined;
+      const filter = { role: "Donor" }; // ✅ Only donors
+  
+      const cityFilter = typeof city === "string" ? city.trim().toLowerCase() : undefined;
+      const bloodFilter = typeof bloodType === "string" ? bloodType.trim().toLowerCase() : undefined;
+  
       if (cityFilter) filter.city = cityFilter;
       if (bloodFilter) filter.bloodType = bloodFilter;
   
@@ -15,7 +45,7 @@ const getUsers = async (req, res) => {
   
       if (users.length === 0) {
         return res.status(404).json({
-          message: "No users found"
+          message: "No donors found"
         });
       }
   
@@ -27,11 +57,12 @@ const getUsers = async (req, res) => {
       });
     }
   };
+  
 
 
   const addPatient=async(req,res)=>{
     try {
-         const {patientName,bloodType,city,hospital,details,phone, gender}=req.body;
+         const {patientName,bloodType,city,hospital,details,phone, gender, requestedBy}=req.body;
          const patientExists = await Patient.findOne({ patientName, bloodType, city, hospital });
 
          if (patientExists) {
@@ -47,7 +78,8 @@ const getUsers = async (req, res) => {
             hospital,
             details,
             phone, 
-            gender
+            gender,
+            requestedBy
             });
 
         res.status(201).json({
@@ -98,5 +130,5 @@ const getUsers = async (req, res) => {
         }
       };
   
-  export { getUsers,addPatient,getPatients };
+  export { getDonors,addPatient,getPatients };
   

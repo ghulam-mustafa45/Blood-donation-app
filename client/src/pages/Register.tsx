@@ -14,6 +14,7 @@ const schema = z.object({
   name: z.string().min(3),
   email: z.string().email(),
   password: z.string().min(8),
+  role: z.enum(["Donor", "Patient"], { required_error: "Please select role" }),
   bloodType: z.string().min(1),
   city: z.string().min(2),
   contactInfo: z.string().min(10).max(12),
@@ -33,21 +34,31 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center">
+
+    <section className='min-h-[80vh] flex items-center justify-center'>
+    <div className=" block items-center justify-center">
+    <h2 className='text-xl text-red-600 font-bold flex items-center justify-center lg:text-2xl mb-6'>Welcome To Blood Donation Registeration</h2>
       <Card className="w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-6">Create your account</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input label="Name" {...register('name')} error={errors.name?.message} />
           <Input label="Email" type="email" {...register('email')} error={errors.email?.message} />
           <Input label="Password" type="password" {...register('password')} error={errors.password?.message} />
+          <Input label="City" {...register('city')} error={errors.city?.message} />
+          <Select label="Donor / Patient" {...register('role')} error={errors.role?.message}>
+            <option value="">Select role</option>
+            {['Donor','Patient'].map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </Select>
           <Select label="Blood Type" {...register('bloodType')} error={errors.bloodType?.message}>
             <option value="">Select blood type</option>
             {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map((bt) => (
               <option key={bt} value={bt}>{bt}</option>
             ))}
           </Select>
-          <Input label="City" {...register('city')} error={errors.city?.message} />
           <Input label="Contact (10 digits)" {...register('contactInfo')} error={errors.contactInfo?.message} />
+          
           {error && <div className="md:col-span-2 text-sm text-red-600">{error}</div>}
           <div className="md:col-span-2">
             <Button type="submit" disabled={isLoading}>{isLoading ? 'Creating...' : 'Register'}</Button>
@@ -56,6 +67,9 @@ export default function Register() {
         <p className="mt-4 text-sm text-gray-600">Already have an account? <Link className="text-primary" to="/login">Login</Link></p>
       </Card>
     </div>
+
+    </section>
+   
   )
 }
 

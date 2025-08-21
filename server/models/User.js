@@ -25,6 +25,10 @@ const userSchema= new mongoose.Schema({
     },
     contactInfo:{
         type:String,
+    },
+    role:{
+        type:String,
+        required:true,
     }
 })
 
@@ -46,7 +50,8 @@ userSchema.methods.generateToken=async function(){
             name:this.name,
             bloodType:this.bloodType,
             city:this.city,
-            contactInfo:this.contactInfo
+            contactInfo:this.contactInfo,
+            role:this.role
         },
         process.env.JWT_SECRET,
         {

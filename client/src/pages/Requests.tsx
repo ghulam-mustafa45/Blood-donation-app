@@ -5,6 +5,9 @@ import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import Button from '../components/ui/Button'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../store'
 
 export default function Requests() {
   const [requests, setRequests] = useState<DonationRequest[]>([])
@@ -15,6 +18,7 @@ export default function Requests() {
   const [hospital, setHospital] = useState('')
   const [phone, setPhone] = useState('')
   const [gender, setGender] = useState('')
+  const authUser = useSelector((s: RootState) => s.auth.user)
 
   useEffect(() => {
     void load()
@@ -82,6 +86,13 @@ export default function Requests() {
             </div>
             {r.details && <p className="mt-2 text-sm text-gray-700">{r.details}</p>}
             <p className="mt-3 text-xs text-gray-500">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</p>
+            {r.requestedBy && authUser && (
+              <div className="mt-3">
+                <Link to={`/chat?room=${encodeURIComponent(`dm:${[authUser._id, r.requestedBy].sort().join(':')}`)}&label=${encodeURIComponent(`Direct • ${r.patientName}`)}`}>
+                  <Button variant="secondary">Chat</Button>
+                </Link>
+              </div>
+            )}
           </Card>
         ))}
         {requests.length === 0 && !loading && (

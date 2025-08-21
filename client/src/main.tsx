@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { SocketProvider } from './context/SocketContext'
 import { Provider } from 'react-redux'
 import { store } from './store'
+import { hydrateFromTokenThunk } from './store/slices/authSlice'
 import './index.css'
 import App from './App.tsx'
 
@@ -18,3 +19,6 @@ createRoot(document.getElementById('root')!).render(
     </Provider>
   </StrictMode>,
 )
+
+// Hydrate auth from token on startup
+store.dispatch<any>(hydrateFromTokenThunk())

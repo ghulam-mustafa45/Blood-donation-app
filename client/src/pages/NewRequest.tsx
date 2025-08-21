@@ -7,6 +7,7 @@ import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import Button from '../components/ui/Button'
+import { useAuth } from '../store/auth'
 
 const schema = z.object({
   patientName: z.string().min(3),
@@ -24,9 +25,11 @@ type FormData = z.infer<typeof schema>
 
 export default function NewRequest() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+  const user = useAuth((s) => s.user)
 
   const onSubmit = async (data: FormData) => {
-    await api.post('/registerPatient', data)
+    const payload = { ...data, requestedBy: user?._id }
+    await api.post('/registerPatient', payload)
     reset()
     alert('Request created')
   }

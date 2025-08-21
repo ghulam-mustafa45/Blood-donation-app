@@ -5,12 +5,16 @@ import Card from '../components/ui/Card'
 import Select from '../components/ui/Select'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../store'
 
 export default function Donors() {
   const [donors, setDonors] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
   const [bloodType, setBloodType] = useState<BloodType | ''>('')
   const [city, setCity] = useState('')
+  const authUser = useSelector((s: RootState) => s.auth.user)
 
   useEffect(() => {
     void load()
@@ -22,7 +26,7 @@ export default function Donors() {
       const params: any = {}
       if (bloodType) params.bloodType = bloodType
       if (city) params.city = city
-      const { data } = await api.get('/users', { params })
+      const { data } = await api.get('/donors', { params })
       setDonors(data)
     } finally {
       setLoading(false)
@@ -57,6 +61,17 @@ export default function Donors() {
               <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">{d.bloodType}</span>
             </div>
             {d.contactInfo && <p className="mt-2 text-sm text-gray-700">Contact: {d.contactInfo}</p>}
+            <div className="mt-3">
+              {authUser ? (
+                <Link to={`/chat?room=${encodeURIComponent(`dm:${[authUser._id, d._id].sort().join(':')}`)}&label=${encodeURIComponent(`Direct • ${d.name}`)}`}>
+                  <Button variant="secondary">Chat</Button>
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <Button variant="secondary">Login to Chat</Button>
+                </Link>
+              )}
+            </div>
           </Card>
         ))}
       </div>
